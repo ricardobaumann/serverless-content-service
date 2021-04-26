@@ -1,0 +1,194 @@
+service: content-service
+
+frameworkVersion: '2'
+
+custom:
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+
+provider:
+  name: aws
+  runtime: java8
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:*"
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource: "*"
+
+package:
+  artifact: target/content-service-dev.jar
+
+functions:
+  create:
+    handler: com.github.ricardobaumann.contentu.CreateHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi:
+          path: /contents
+          method: post
+  get:
+    handler: com.github.ricardobaumann.contentu.GetHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi:
+          path: /contents/{id}
+          method: get
+  delete:
+    handler: com.github.ricardobaumann.contentu.DeleteHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi:
+          path: /contents/{id}
+          method: delete
+
+  create-link:
+    handler: com.github.ricardobaumann.contentu.CreateLinkHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi: #dedicated dynamo table
+          path: /contents/{content-id}/media-links/{media-id}
+          method: put
+
+  delete-link:
+    handler: com.github.ricardobaumann.contentu.DeleteLinkHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi: #and s3 events
+          path: /contents/{content-id}/media-links/{media-id}
+          method: delete
+
+  get-links:
+    handler: com.github.ricardobaumann.contentu.GetLinksHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi:
+          path: /contents/{content-id}/media-links
+          method: get
+
+  create-media:
+    handler: com.github.ricardobaumann.contentu.CreateMediaHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi:
+          path: /media #create media file
+          method: post
+
+  update-media:
+    handler: com.github.ricardobaumann.contentu.UpdateMediaHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi:
+          path: /media/{id} #update media file
+          method: put
+
+  get-media:
+    handler: com.github.ricardobaumann.contentu.GetMediaHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi:
+          path: /media/{id}
+          method: get
+
+  delete-media:
+    handler: com.github.ricardobaumann.contentu.DeleteMediaHandler
+    memorySize: 128
+    timeout: 25
+    events:
+      - httpApi:
+          path: /media/{id}
+          method: delete
+
+resources:
+  Resources:
+    productsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: contents
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+
+    mediaLinksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: media-links
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: content-id
+            AttributeType: S
+          - AttributeName: media-id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+        GlobalSecondaryIndexes:
+          - IndexName: content-id-index
+            KeySchema:
+              - AttributeName: content-id
+                KeyType: HASH
+            Projection:
+              ProjectionType: KEYS_ONLY
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+
+          - IndexName: media-id-index
+            KeySchema:
+              - AttributeName: media-id
+                KeyType: HASH
+            Projection:
+              ProjectionType: KEYS_ONLY
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+
+    mediaFileBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: media-bucket-dev
+        AccessControl: Private
+        CorsConfiguration:
+          CorsRules:
+            - AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - HEAD
+              AllowedOrigins:
+                - "*"
+              AllowedHeaders:
+                - "*"
+
