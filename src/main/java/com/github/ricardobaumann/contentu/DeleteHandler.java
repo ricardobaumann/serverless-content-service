@@ -9,6 +9,8 @@ package com.github.ricardobaumann.contentu;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.github.ricardobaumann.contentu.model.ApiGatewayResponse;
+import com.github.ricardobaumann.contentu.service.ContentService;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Collections;

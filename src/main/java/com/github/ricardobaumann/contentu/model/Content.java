@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.github.ricardobaumann.contentu;
+package com.github.ricardobaumann.contentu.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

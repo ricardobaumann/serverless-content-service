@@ -29,7 +29,7 @@ package:
 functions:
   create:
     handler: com.github.ricardobaumann.contentu.CreateHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi:
@@ -37,7 +37,7 @@ functions:
           method: post
   get:
     handler: com.github.ricardobaumann.contentu.GetHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi:
@@ -45,7 +45,7 @@ functions:
           method: get
   delete:
     handler: com.github.ricardobaumann.contentu.DeleteHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi:
@@ -54,7 +54,7 @@ functions:
 
   create-link:
     handler: com.github.ricardobaumann.contentu.CreateLinkHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi: #dedicated dynamo table
@@ -63,7 +63,7 @@ functions:
 
   delete-link:
     handler: com.github.ricardobaumann.contentu.DeleteLinkHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi: #and s3 events
@@ -72,7 +72,7 @@ functions:
 
   get-links:
     handler: com.github.ricardobaumann.contentu.GetLinksHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi:
@@ -81,7 +81,7 @@ functions:
 
   create-media:
     handler: com.github.ricardobaumann.contentu.CreateMediaHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi:
@@ -90,7 +90,7 @@ functions:
 
   update-media:
     handler: com.github.ricardobaumann.contentu.UpdateMediaHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi:
@@ -99,7 +99,7 @@ functions:
 
   get-media:
     handler: com.github.ricardobaumann.contentu.GetMediaHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi:
@@ -108,7 +108,7 @@ functions:
 
   delete-media:
     handler: com.github.ricardobaumann.contentu.DeleteMediaHandler
-    memorySize: 128
+    memorySize: 256
     timeout: 25
     events:
       - httpApi:
@@ -178,7 +178,7 @@ resources:
     mediaFileBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: media-bucket-dev
+        BucketName: media-bucket-dev2
         AccessControl: Private
         CorsConfiguration:
           CorsRules:

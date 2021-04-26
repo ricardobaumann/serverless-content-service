@@ -7,6 +7,10 @@
 
 package com.github.ricardobaumann.contentu;
 
+import com.github.ricardobaumann.contentu.model.Content;
+import com.github.ricardobaumann.contentu.model.MediaLink;
+import com.github.ricardobaumann.contentu.service.ContentService;
+import com.github.ricardobaumann.contentu.service.MediaLinkService;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
@@ -24,10 +28,18 @@ public class BeanFactory {
 
     private static final ContentService CONTENT_SERVICE = new ContentService(CONTENT_TABLE);
 
+    private static final MediaLinkService MEDIA_LINK_SERVICE =
+            new MediaLinkService(DDB_ENHANCED_CLIENT.table("media-links",
+                    TableSchema.fromBean(MediaLink.class)));
+
     private BeanFactory() {
     }
 
     public ContentService getContentService() {
         return CONTENT_SERVICE;
+    }
+
+    public MediaLinkService getMediaLinkService() {
+        return MEDIA_LINK_SERVICE;
     }
 }

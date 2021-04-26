@@ -5,8 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.github.ricardobaumann.contentu;
+package com.github.ricardobaumann.contentu.service;
 
+import com.github.ricardobaumann.contentu.model.Content;
+import com.github.ricardobaumann.contentu.model.CreateContentCommand;
 import lombok.AllArgsConstructor;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
@@ -22,8 +24,8 @@ public class ContentService {
     public Content create(CreateContentCommand createContentCommand) {
         Content content = new Content(UUID.randomUUID().toString(),
                 createContentCommand.getBody());
-         contentDynamoDbTable.putItem(content);
-         return content;
+        contentDynamoDbTable.putItem(content);
+        return content;
     }
 
     public Optional<Content> getById(String id) {
